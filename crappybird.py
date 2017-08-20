@@ -172,14 +172,19 @@ def on_key_down(key):
 
     alien = Game.alien
     if key == keys.SPACE and alien.alive:
+
+        def finished():
+            if not alien.alive:
+                alien.image = 'alien_hurt'
+            else:
+                alien.image = 'alien'
+
         alien.image = 'alien_fly'
         Animation(alien,
                   pos=(alien.x, alien.y-jump_dist),
                   duration=0.3,
                   tween='decelerate',
-                  on_finished=lambda: setattr(alien,
-                                              'image',
-                                              'alien'))
+                  on_finished=finished)
 
     elif key == keys.R:
         Game.start()
