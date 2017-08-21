@@ -13,4 +13,4 @@ Then
 	pgzrun crappybird.py
 
 ## Attribution ##
-[Alien image](https://pygame-zero.readthedocs.io/en/stable/introduction.html#draw-a-sprite) provided by Daniel Pope
+[Alien image](https://opengameart.org/content/map-pack-180-assets) is Public Domain, provided by Kenney.
