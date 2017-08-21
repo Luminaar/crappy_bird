@@ -19,9 +19,10 @@ class Const():
     GREEN = (0, 200, 0)
     BLUE = (0, 0, 200)
     SKY = (90, 201, 252)
+    GREY = (250, 250, 250)
 
     FONT = pygame.font.SysFont('notosans', 30)
-    INFO_LABEL = FONT.render('R - reset  Q - quit', 1, BLUE)
+    INFO_LABEL = FONT.render('R - reset  Q - quit', 1, GREY)
 
 
 class Wall():
@@ -130,7 +131,41 @@ class Game():
         cls.triggered = False
 
 
-        cls.background = Actor('background')
+        cls.background = Actor('background', topleft=(0, 0))
+        cls.scroll = Actor('scroll', topleft=(0, 0))
+        cls.scroll_2 = Actor('scroll', topleft=(Const.WIDTH, 0))
+        cls.foreground = Actor('foreground', topleft=(0, 0))
+        cls.foreground_2 = Actor('foreground', topleft=(Const.WIDTH, 0))
+
+
+        def animate_bg(actor, duration):
+            actor.topleft = (Const.WIDTH,0)
+            Game.bg_anims.append(animate(actor,
+                                 duration=duration,
+                                 topleft=(-Const.WIDTH, 0),
+                                 on_finished=lambda: animate_bg(actor, duration)))
+
+        cls.bg_anims = [
+            animate(cls.scroll,
+                    duration=30,
+                    topleft=(-Const.WIDTH, 0),
+                    on_finished=lambda: animate_bg(cls.scroll, 60)),
+            animate(cls.scroll_2,
+                    duration=60,
+                    topleft=(-Const.WIDTH, 0),
+                    on_finished=lambda: animate_bg(cls.scroll_2, 60)),
+
+            animate(cls.foreground,
+                    duration=15,
+                    topleft=(-Const.WIDTH, 0),
+                    on_finished=lambda: animate_bg(cls.foreground, 30)),
+            animate(cls.foreground_2,
+                    duration=30,
+                    topleft=(-Const.WIDTH,0),
+                    on_finished=lambda: animate_bg(cls.foreground_2, 30)),
+        ]
+
+
 
         alien = Alien('alien')
         alien.center = 200, Const.HEIGHT/2
@@ -192,6 +227,12 @@ class Alien(Actor):
         for wall in Game.walls:
             wall.stop_animations()
 
+        for anim in Game.bg_anims:
+            try:
+                anim.stop()
+            except ValueError:
+                pass
+
 
         death_anim = animate(self,
                              pos=(self.x, self.y-100),
@@ -221,11 +262,15 @@ def draw():
     times each second by default)."""
 
     Game.background.draw()
+    Game.scroll.draw()
+    Game.scroll_2.draw()
+    Game.foreground.draw()
+    Game.foreground_2.draw()
     Game.walls[0].draw()
     Game.walls[1].draw()
     Game.alien.draw()
 
-    counter_text = Const.FONT.render(str(Game.counter), 1, Const.BLUE)
+    counter_text = Const.FONT.render(str(Game.counter), 1, Const.GREY)
     screen.blit(counter_text, (10,10))
     screen.blit(Const.INFO_LABEL, (Const.WIDTH - 260, Const.HEIGHT - 40))
 
