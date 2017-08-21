@@ -241,21 +241,6 @@ class Alien(Actor):
                              on_finished=animate_fall)
 
 
-def collides(act, rects):
-    """Check if actor 'act' collides with any of the 'rects'. Rects can
-    be a sequence of rects or a single rect."""
-
-    if isinstance(rects, Rect):
-        if rects.colliderect(act):
-            return True
-    else:
-        for rect in rects:
-            if rect.colliderect(act):
-                return True
-
-    return False
-
-
 # Event handlers
 def draw():
     """Handle all drawing. This function is executed on each tick (60
@@ -312,11 +297,7 @@ def update():
     if alien.alive:
         alien.y += Const.GRAVITY
 
-        if collides(alien, Game.trigger) and not Game.triggered:
-            Game.counter += 1
-            Game.triggered = True
-
-        if collides(alien, Game.ground):
+        if Game.ground.colliderect(alien):
             alien.kill()
 
         for wall in walls:
